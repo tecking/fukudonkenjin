@@ -1,0 +1,74 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: fukudonkenjin\n"
+"Language: ja\n"
+
+#: 
+#, fuzzy
+msgid "Fukudonkenjin settings"
+msgstr "福丼県人 設定"
+
+#: 
+msgid "Check any entries you want to replace."
+msgstr "「福井県」を「福丼県」に置換したい項目にチェックを入れてください。"
+
+#: 
+msgid "wp_title"
+msgstr "ページの title タグ（wp_title）"
+
+#: 
+msgid "bloginfo"
+msgstr "サイトの説明文など（bloginfo）"
+
+#: 
+msgid "the_title"
+msgstr "記事のタイトル（the_title）"
+
+#: 
+msgid "the_content"
+msgstr "本文（the_content）"
+
+#: 
+msgid "the_excerpt"
+msgstr "抜粋（the_excerpt）"
+
+#: 
+msgid "the_author_description"
+msgstr "著者のプロフィール情報（the_author_description）"
+
+#: 
+msgid "widget_title"
+msgstr "ウィジェットタイトル（widget_title）"
+
+#: 
+msgid "widget_text"
+msgstr "テキストウィジェット（widget_text）"
+
+#: 
+msgid "the_category"
+msgstr "カテゴリー名（the_category）"
+
+#: 
+msgid "wp_list_categories"
+msgstr "カテゴリーリスト（wp_list_categories）"
+
+#: 
+msgid "the_tags"
+msgstr "タグ名（the_tags）"
+
+#: 
+msgid "wp_tag_cloud"
+msgstr "タグクラウド（wp_tag_cloud）"
+
+#: 
+msgid "entire_page"
+msgstr "ページ全体（パフォーマンス低下の可能性があります）"
+
+#: 
+msgid "Save Changes"
+msgstr "変更を保存"
+
