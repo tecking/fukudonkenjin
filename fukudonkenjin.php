@@ -2,7 +2,7 @@
 /*
 Plugin Name: Fukudonkenjin
 Version: 0.2
-Description: "Fukudonkenjin(福丼県人)" means a person living in "Fukudonken(福丼県)". Fukudonken is a holy place of rice bowls in Japan. Activating this plugin, you can see some "福井県(Fukui-ken)" strings are replaced with "福丼県" on your website. Please see also the "福丼県" official website(http://fukudon.jp/).
+Description: "Fukudonkenjin(福丼県人)" means the people living in "Fukudonken(福丼県)". Fukudonken is a holy place of rice bowls in Japan. Activating this plugin, you can see some "福井県(Fukui-ken)" strings are replaced with "福丼県" on your website. Please see also the "福丼県" official website(http://fukudon.jp/).
 Author: tecking
 Author URI: https://github.com/tecking
 Text Domain: fukudonkenjin
@@ -102,7 +102,7 @@ class Fukudonkenjin {
 
 				update_option( 'fkd_settings', $settings );
 
-				wp_safe_redirect( 'options-general.php?page=fukudonkenjin' );
+				wp_safe_redirect( menu_page_url( 'fukudonkenjin', false ) );
 			}
 		}
 	}
@@ -112,7 +112,7 @@ class Fukudonkenjin {
 	?>
 	<div id="fukudonkenjin" class="wrap">
 		<h2><?php _e( 'Fukudonkenjin settings', 'fukudonkenjin' ); ?></h2>
-		<form method="post" action="<?php echo esc_attr($_SERVER['REQUEST_URI']); ?>">
+		<form method="post" action="">
 			<?php
 			wp_nonce_field( 'fukudonkenjin', '_wpnonce' );
 
