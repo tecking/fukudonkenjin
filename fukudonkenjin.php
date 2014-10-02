@@ -1,40 +1,179 @@
 <?php
 /*
 Plugin Name: Fukudonkenjin
-Version: 0.1
-Description: サイト内にある「福井県」の文字列を「福丼県」に置換して表示します。置換対象は、記事タイトル・本文・抜粋・カテゴリー名・タグ名・テキストウィジェット・著者ページのプロフィール情報です。勢いで作りました。後悔はしてません。
-Author: Tecking
+Version: 0.2
+Description: "Fukudonkenjin(福丼県人)" means a person living in "Fukudonken(福丼県)". Fukudonken is a holy place of rice bowls in Japan. Activating this plugin, you can see some "福井県(Fukui-ken)" strings are replaced with "福丼県" on your website. Please see also the "福丼県" official website(http://fukudon.jp/).
+Author: tecking
 Author URI: https://github.com/tecking
 Text Domain: fukudonkenjin
 Domain Path: /languages
+License: GPLv2
 */
-/*  Copyright 2014 Tecking (email : tecking@tecking.org)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
+/*  Copyright 2014 tecking (email : tecking@tecking.org)
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License, version 2, as
 	published by the Free Software Foundation.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 
-add_filter( 'the_title',              'fdk_str_replace' );
-add_filter( 'the_content',            'fdk_str_replace' );
-add_filter( 'the_excerpt',            'fdk_str_replace' );
-add_filter( 'the_author_description', 'fdk_str_replace' );
-add_filter( 'widget_text',            'fdk_str_replace' );
-add_filter( 'the_category',           'fdk_str_replace' );
-add_filter( 'wp_list_categories',     'fdk_str_replace' );
-add_filter( 'the_tags',               'fdk_str_replace' );
-add_filter( 'wp_tag_cloud',           'fdk_str_replace' );
+/*
+ * Initialize
+ */
+$entries = array( 'wp_title', 'bloginfo', 'the_title', 'the_content', 'the_excerpt', 'the_author_description', 'widget_title', 'widget_text', 'the_category', 'wp_list_categories', 'the_tags', 'wp_tag_cloud', 'entire_page' );
+$fukudonkenjin = new Fukudonkenjin();
+$fukudonkenjin->register();
 
+
+/*
+ * Fukudonkenjin class
+ */
+class Fukudonkenjin {
+
+	private $version = '0.2';
+	private $langs   = 'languages';
+
+	function __construct()
+	{
+		$data = get_file_data(
+			__FILE__,
+			array( 'ver' => 'Version', 'langs' => 'Domain Path' )
+		);
+		$this->version = $data['ver'];
+		$this->langs   = $data['langs'];
+	}
+
+	public function register()
+	{
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+	}
+
+	public function plugins_loaded()
+	{
+		load_plugin_textdomain(
+			'fukudonkenjin',
+			false,
+			dirname( plugin_basename( __FILE__ ) ) . $this->langs
+		);
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_init', array( $this, 'admin_init' ) );
+
+	}
+
+	public function admin_menu()
+	{
+		add_options_page(
+			__( 'Fukudonkenjin', 'fukudonkenjin' ),
+			__( 'Fukudonkenjin', 'fukudonkenjin' ),
+			'manage_options',
+			'fukudonkenjin',
+			array( $this, 'options_page' )
+		);
+	}
+
+	public function admin_init()
+	{
+		global $entries;
+		if ( isset( $_POST['_wpnonce'] ) && $_POST['_wpnonce'] ) {
+			if ( check_admin_referer( 'fukudonkenjin', '_wpnonce' ) ) {
+
+				$settings = array();
+
+				foreach ( $entries as $entry ) {
+					if ( isset( $_POST["$entry"] ) && $_POST["$entry"] ) {
+							$settings["$entry"] = intval( $_POST["$entry"] );
+					}
+					else {
+						$settings["$entry"] = 0;
+					}
+				}
+
+				update_option( 'fkd_settings', $settings );
+
+				wp_safe_redirect( 'options-general.php?page=fukudonkenjin' );
+			}
+		}
+	}
+
+	public function options_page()
+	{
+	?>
+	<div id="fukudonkenjin" class="wrap">
+		<h2><?php _e( 'Fukudonkenjin settings', 'fukudonkenjin' ); ?></h2>
+		<form method="post" action="<?php echo esc_attr($_SERVER['REQUEST_URI']); ?>">
+			<?php
+			wp_nonce_field( 'fukudonkenjin', '_wpnonce' );
+
+			global $entries;
+			$settings = get_option('fkd_settings');
+			?>
+
+			<p><?php _e( 'Check any entries you want to replace.', 'fukudonkenjin' ); ?></p>
+			
+			<?php
+			// Notice
+			// Because of "entire_page" entry uses JavaScript, it may decrease performance.  
+			?>
+			<?php foreach ( $entries as $entry ) : $entry = esc_attr( $entry ); ?>
+			<p>
+				<input type="checkbox" id="<?php echo $entry; ?>" name="<?php echo $entry; ?>" value="1" <?php if ( $settings["$entry"] == 1 ) echo 'checked'; ?>><label for="<?php echo $entry; ?>"><?php _e( $entry, 'fukudonkenjin' ); ?></label></input>
+			</p>
+ 			<?php endforeach; ?>
+
+			<p class="submit"><input type="submit" class="button-primary" value="<?php _e('Save Changes', 'fukudonkenjin'); ?>"></p>
+		</form>
+	</div>
+
+	<?php
+	}
+
+	public function admin_enqueue_scripts()
+	{
+		if (isset($_GET['page']) && $_GET['page'] === 'fukudonkenjin') {
+			wp_enqueue_style(
+				'admin-fukudonkenjin-style',
+				plugins_url('css/admin-fukudonkenjin.css', __FILE__),
+				array(),
+				$this->version,
+				'all'
+			);
+		}
+	}
+
+} // end of Fukudonkenjin class
+
+
+/*
+ * Replace strings
+ */
 function fdk_str_replace( $content ) {
 	return str_replace( '福井県', '福丼県', $content );
+}
+
+$settings = get_option('fkd_settings'); 
+foreach ( (array)$settings as $key => $filter ) {
+	if ( $key === 'entire_page' ) break;
+	if ( $filter == 1 ) add_filter( $key, 'fdk_str_replace' );
+}
+
+if ( $settings['entire_page'] == 1 ) {
+	add_action( 'wp_head', 'fkd_wp_head' );
+	function fkd_wp_head() {
+		if ( !is_admin() ) {
+			wp_enqueue_script( 'jquery' );
+			wp_enqueue_script( 'config', plugins_url( 'js/fukudonkenjin.js', __FILE__ ),array( 'jquery' ), '0.2', true );
+		}
+	}
 }
