@@ -2,9 +2,9 @@
 /*
 Plugin Name: Fukudonkenjin
 Version: 0.2
-Description: "Fukudonkenjin(福丼県人)" means the people living in "Fukudonken(福丼県)". Fukudonken is a holy place of rice bowls in Japan. Activating this plugin, you can see some "福井県(Fukui-ken)" strings are replaced with "福丼県" on your website. Please see also the "福丼県" official website(http://fukudon.jp/).
+Description: Let's join Fukudonkenjin! Fukudonkenjin is the name of donburi-mono lovers :)
 Author: tecking
-Author URI: https://github.com/tecking
+Author URI: http://www.tecking.org/
 Text Domain: fukudonkenjin
 Domain Path: /languages
 License: GPLv2
