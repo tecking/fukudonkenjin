@@ -17,3 +17,7 @@
 * タグ名（the_tags）
 * タグクラウド（wp_tag_cloud）
 * ページ全体（パフォーマンス低下の可能性があります）
+
+## 配布について
+
+WordPressの[公式プラグインディレクトリ](https://wordpress.org/plugins/fukudonkenjin/)で配布しています。
